@@ -2,7 +2,7 @@
 
 **Smart Scheduler AI Agent** provides a natural, voice-enabled, multi-turn conversation to help users find and schedule meetings via Google Calendar.
 
-Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, and **Text-to-Speech (TTS)**, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
+Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, and **Text-to-Speech (TTS)** via Google Cloud's APIs, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
 
 
 ## ✅ Features Implemented
@@ -76,6 +76,15 @@ graph TD
 - ✅ Exit Command: Say 'exit' anytime to end the session
 
 
+## ✨ Design Choices
+
+- Used Gemini API for flexible, contextual conversation handling.
+- Used Google Cloud's Speech-to-Text (Streaming) for real-time transcriptions.
+- Used Google Cloud's Text-to-Speech + pygame for smooth audio playback.
+- Handled edge cases like empty responses, audio errors, or ambiguous time requests.
+- Focused on real-time conversational flow — fast responses, no awkward pauses.
+
+
 ## 📂 Repository Structure
 
 ```
@@ -86,12 +95,3 @@ graph TD
 ├── requirements.txt     # Python dependencies
 ├── README.md            # This file
 ```
-
-
-## ✨ Design Choices
-
-- Used Gemini API for flexible, contextual conversation handling
-- Used Google Speech-to-Text (Streaming) for real-time transcriptions
-- Used Google Text-to-Speech + pygame for smooth audio playback
-- Handled edge cases like empty responses, audio errors, or ambiguous time requests
-- Focused on real-time conversational flow — fast responses, no awkward pauses
