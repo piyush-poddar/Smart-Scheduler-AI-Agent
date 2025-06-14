@@ -30,10 +30,14 @@ graph TD
     A[🎙️ Microphone Input] --> B[📝 Google Cloud Speech-to-Text]
     B --> C[📝 Transcribed User Text]
     C --> D[🤖 Gemini API - LLM]
-    D --> E[💬 AI-generated Response]
-    E --> F[🔊 Google Cloud Text-to-Speech]
-    F --> G[🎧 Play Response]
-    G --> A
+    D -->|Tool: get_free_slot| E1[Free Slots]
+    D -->|Tool: parse_datetime| E2[Date and Time]
+    E1 --> D
+    E2 --> D
+    D --> F[💬 AI-generated Response]
+    F --> G[🔊 Google Cloud Text-to-Speech]
+    G --> H[🎧 Play Response]
+    H --> A
 ```
 
 
