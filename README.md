@@ -27,12 +27,12 @@ Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Re
 
 ```mermaid
 graph TD
-    A[🎙️ Microphone Input] --> B[Google Speech-to-Text]
+    A[Microphone Input] --> B[Google Speech-to-Text]
     B --> C[Transcribed User Text]
     C --> D[Gemini API (LLM)]
     D --> E[AI-generated Response]
     E --> F[Google Text-to-Speech]
-    F --> G[🔊 Play Response]
+    F --> G[Play Response]
     G --> A
 ```
 
