@@ -2,7 +2,7 @@
 
 **Smart Scheduler AI Agent** provides a natural, voice-enabled, multi-turn conversation to help users find free slots and schedule meetings via Google Calendar.
 
-Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, via Google Cloud and **Text-to-Speech (TTS)** via Eleven Labs APIs, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
+Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, via Google Cloud and **Text-to-Speech (TTS)** via ElevenLabs APIs, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
 
 
 ## ✅ Features Implemented
@@ -37,7 +37,7 @@ graph TD
     E2 --> D
     E3 --> D
     D --> F[💬 AI-generated Response]
-    F --> G[🔊 Eleven Labs Text-to-Speech]
+    F --> G[🔊 ElevenLabs Text-to-Speech]
     G --> H[🎧 Play Response]
     H --> A
 ```
@@ -65,7 +65,7 @@ graph TD
 - Schedules the meeting on the desired date, time and slot.
 
 ### 🗣️ Voice Output (TTS)
-- Uses Eleven Labs Text-to-Speech (TTS) for human-like responses
+- Uses ElevenLabs Text-to-Speech (TTS) for human-like responses
 - Natural turn-taking: plays response, then resumes listening
 
 ### ♻️ Stateful & Dynamic
@@ -87,7 +87,7 @@ graph TD
 
 - Used Gemini API for flexible, contextual conversation handling.
 - Used Google Cloud's Speech-to-Text (Streaming) for real-time transcriptions.
-- Used Eleven Lab's Text-to-Speech + pygame for smooth audio playback.
+- Used ElevenLabs Text-to-Speech + pygame for smooth audio playback.
 - Handled edge cases like empty responses, audio errors, or ambiguous time requests.
 - Focused on real-time conversational flow — fast responses, no awkward pauses.
 
