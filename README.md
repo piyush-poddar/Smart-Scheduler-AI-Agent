@@ -1,8 +1,8 @@
 # 🤖🎙️ Smart Scheduler AI Agent
 
-**Smart Scheduler AI Agent** provides a natural, voice-enabled, multi-turn conversation to help users find and schedule meetings via Google Calendar.
+**Smart Scheduler AI Agent** provides a natural, voice-enabled, multi-turn conversation to help users find free slots and schedule meetings via Google Calendar.
 
-Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, and **Text-to-Speech (TTS)** via Google Cloud's APIs, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
+Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Recognition (STT)**, via Google Cloud and **Text-to-Speech (TTS)** via Eleven Labs APIs, the system showcases conversational memory, calendar integration, and advanced voice-based interaction.
 
 
 ## ✅ Features Implemented
@@ -20,7 +20,7 @@ Built with **LLMs (Gemini API)**, **Google Calendar API**, real-time **Speech Re
 | Graceful conflict resolution (suggests alternatives)|   ✅   |
 | Smarter Time Parsing (e.g., 'day after tomorrow')   |   ✅   |
 | Dynamic rescheduling mid-conversation               |   ✅   |
-
+| Scheduling the meeting in Google Calander           |   ✅   |
 
 
 ## 🏗️ Architecture Overview
@@ -32,10 +32,12 @@ graph TD
     C --> D[🤖 Gemini API - LLM]
     D -->|Tool: get_free_slot| E1[Free Slots]
     D -->|Tool: parse_datetime| E2[Date and Time]
+    D -->|Tool: book_meeting| E3[Meeting Link]
     E1 --> D
     E2 --> D
+    E3 --> D
     D --> F[💬 AI-generated Response]
-    F --> G[🔊 Google Cloud Text-to-Speech]
+    F --> G[🔊 Eleven Labs Text-to-Speech]
     G --> H[🎧 Play Response]
     H --> A
 ```
@@ -60,9 +62,10 @@ graph TD
 - Supports complex time requests like:
   - "day after tomorrow at 1 PM"
   - "evening on Tuesday"
+- Schedules the meeting on the desired date, time and slot.
 
 ### 🗣️ Voice Output (TTS)
-- Uses Google Text-to-Speech (TTS) for human-like responses
+- Uses Eleven Labs Text-to-Speech (TTS) for human-like responses
 - Natural turn-taking: plays response, then resumes listening
 
 ### ♻️ Stateful & Dynamic
@@ -84,7 +87,7 @@ graph TD
 
 - Used Gemini API for flexible, contextual conversation handling.
 - Used Google Cloud's Speech-to-Text (Streaming) for real-time transcriptions.
-- Used Google Cloud's Text-to-Speech + pygame for smooth audio playback.
+- Used Eleven Lab's Text-to-Speech + pygame for smooth audio playback.
 - Handled edge cases like empty responses, audio errors, or ambiguous time requests.
 - Focused on real-time conversational flow — fast responses, no awkward pauses.
 

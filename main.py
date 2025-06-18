@@ -1,13 +1,19 @@
+import os
 import io
 import queue
 import re
-import sys
+from dotenv import load_dotenv
 
 import pyaudio
 import pygame
 import google.auth
 from google.cloud import speech, texttospeech
+from elevenlabs.client import ElevenLabs
 from agent import get_gemini_response
+
+load_dotenv()
+
+ELEVEN_LABS_API_KEY = os.getenv("ELEVEN_LABS_API_KEY")
 
 # Audio recording parameters
 RATE = 16000
@@ -16,6 +22,10 @@ CHUNK = int(RATE / 10)  # 100ms
 credentials, project = google.auth.default()
 speech_client = speech.SpeechClient(credentials=credentials)
 tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
+
+elevenlabs_client = ElevenLabs(
+    api_key=ELEVEN_LABS_API_KEY,
+)
 
 # Initialize audio playback
 pygame.mixer.init()
@@ -119,6 +129,28 @@ def synthesize_and_play(text):
     while pygame.mixer.music.get_busy():
         continue
 
+def synthesize_and_play_elevenlabs(text):
+    audio_generator = elevenlabs_client.text_to_speech.convert(
+        voice_id="EXAVITQu4vr4xnSDxMaL",
+        output_format="mp3_44100_128",
+        text=text,
+        model_id="eleven_flash_v2_5",
+    )
+
+    # ✅ Collect the bytes from the generator
+    audio_bytes = b"".join(audio_generator)
+
+    # Initialize Pygame mixer
+    pygame.mixer.init()
+
+    audio_file = io.BytesIO(audio_bytes)
+    audio_file.seek(0)
+
+    pygame.mixer.music.load(audio_file, "mp3")
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        continue
 
 def main():
     print("🎙️ Start speaking. Say 'exit' to quit.\n")
@@ -137,7 +169,8 @@ def main():
         gemini_response = get_gemini_response(user_input)
         print(f"Agent: {gemini_response}\n")
 
-        synthesize_and_play(gemini_response)
+        # synthesize_and_play(gemini_response)
+        synthesize_and_play_elevenlabs(gemini_response)
 
 
 if __name__ == "__main__":

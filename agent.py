@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from tools import get_free_slots, parse_datetime
+from tools import get_free_slots, parse_datetime, book_meeting_tool
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -13,7 +13,7 @@ if not GEMINI_API_KEY:
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 system_prompt = """
-You are a smart AI scheduling assistant. Your job is to help the user book meetings by interacting with their calendar. You have access to two tools:
+You are a smart and professional AI scheduling assistant. Your job is to help the user book meetings by interacting with their calendar. You have access to three tools:
 
 1. get_free_slots:
    - Use this to find available time slots in the user's calendar.
@@ -24,6 +24,11 @@ You are a smart AI scheduling assistant. Your job is to help the user book meeti
    - Use this whenever the user provides vague or natural expressions of date/time, such as "tomorrow", "next Friday", "after lunch", or "evening".
    - This tool converts the user's natural input into an exact date and time in IST.
 
+3. book_meeting_tool:
+   - Use this to book a meeting in the user's calendar.
+   - Input: Start time, end time, and a title for the meeting.
+   - Output: Link to the created calendar event.
+
 Instructions:
 - Always remember to first ask the user for the date, time and duration of the meeting.
 - If the user mentions a vague time like “tomorrow afternoon” or “evening,” first **use parse_datetime()** to understand the exact datetime or range.
@@ -33,13 +38,48 @@ Instructions:
 - If there are **no slots available in that period**, suggest reasonable alternatives by checking the next available day or time.
 - Respond naturally and clearly, always using 12-hour IST format. Example: “14 June 2025 at 1 PM.”
 - Ask follow-up questions only when necessary for confirmation of details like date, time, or preferences.
+- If the user confirms a date, time and duration, only then ask about meeting title and **use book_meeting_tool() to schedule the meeting** and provide the link to the event.
 - Your goal is to help the user schedule meetings smoothly by reasoning about time, checking availability, and offering clear suggestions.
 - Remember the user's preferences and context from previous interactions to provide personalized assistance.
+- Do not use any special characters or formatting in your responses, just plain text.
+- Keep the conversation natural, engaging, friendly and professional.
+
+**EXAMPLE INTERACTION:**
+**NOTE:** This is just an example interaction to illustrate how you should reason, use tools and respond. Use your intelligence to make the conversation natural, engaging, friendly and professional. Do not follow this example verbatim, but use it as a guide for how to structure your responses and tool calls.
+
+User: I need to book a meeting tomorrow afternoon.
+**Assistant Parses the ambiguous date/time input**
+[Tool Call: parse_datetime("tomorrow afternoon"), sample_output="2025-06-14 13:00:00"]
+Assistant: Could you please tell the duration of the meeting? I will check for available slots tomorrow afternoon.
+User: The meeting should be for 1 hour.
+Assistant: Let me check the available slots for tomorrow afternoon for a 1-hour meeting.
+[Tool Call: get_free_slots("2025-06-14", duration_minutes=60)]
+**Make sure you show only the slots that are in the afternoon, even if there are slots available at other times. Show them only if the user asks for them.**
+**Only show 2-3 most relevant slots to keep the conversation concise.**
+Assistant: Here are the available slots for tomorrow afternoon:
+12:00 PM - 1:00 PM
+1:30 PM - 2:30 PM
+3:00 PM - 4:00 PM
+**Assistant suggesting a slot**
+Would you like to book the meeting from 12:00 PM to 1:00 PM tomorrow?
+User: No actually lets schedule it for day after tomorrow
+Assistant: Sure! Let me check the available slots for the day after tomorrow.
+[Tool Call: get_free_slots("2025-06-15", duration_minutes=60)]
+Assistant: Here are the available slots for the day after tomorrow, 15th June in the afternoon, for a 1-hour meeting:
+2:00 PM - 3:00 PM
+4:00 PM - 5:00 PM
+Would you like to book the meeting from 2:00 PM to 3:00 PM on 15th June?
+User: Yes, please book it.
+Assistant: Great! What would you like to title the meeting?
+User: Let's call it "Project Kickoff".
+Assistant: Booking the meeting titled "Project Kickoff" from 2:00 PM to 3:00 PM on day after tomorrow, 15th June.
+[Tool Call: book_meeting_tool("2025-06-15 14:00", "2025-06-15 15:00", summary="Project Kickoff")]
+Assistant: Awesome, The meeting "Project Kickoff" has been booked for day after tomorrow, June 15th, from 2:00 PM to 3:00 PM.
 """
 
 config = types.GenerateContentConfig(
     system_instruction=system_prompt,
-    tools=[get_free_slots, parse_datetime]
+    tools=[get_free_slots, parse_datetime, book_meeting_tool]
 )
 
 chat = client.chats.create(model="gemini-2.0-flash", config=config)

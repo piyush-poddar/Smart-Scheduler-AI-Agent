@@ -96,6 +96,28 @@ def find_free_slots(date: str, duration_minutes: int = 60) -> List[Tuple[datetim
 def format_slots(slots: List[Tuple[datetime.datetime, datetime.datetime]]) -> List[str]:
     return [f"{start.strftime('%I:%M %p')} - {end.strftime('%I:%M %p')}" for start, end in slots]
 
+def book_meeting(start_time: datetime.datetime, end_time: datetime.datetime, summary: str = "Meeting") -> str:
+    service = get_calendar_service()
+
+    event = {
+        'summary': summary,
+        'start': {
+            'dateTime': start_time.astimezone(pytz.UTC).isoformat(),
+            'timeZone': 'Asia/Kolkata'
+        },
+        'end': {
+            'dateTime': end_time.astimezone(pytz.UTC).isoformat(),
+            'timeZone': 'Asia/Kolkata'
+        },
+        'reminders': {
+            'useDefault': True,
+        }
+    }
+
+    created_event = service.events().insert(calendarId='primary', body=event).execute()
+    return created_event.get('htmlLink', '')
+
+
 if __name__ == "__main__":
     # Example usage
     date = "2025-06-14"
@@ -108,3 +130,12 @@ if __name__ == "__main__":
             print(slot)
     else:
         print("No free slots available for this day.")
+    
+    # Example booking
+    if free_slots:
+        start_time = free_slots[0][0]  # Take the first available slot
+        end_time = start_time + datetime.timedelta(minutes=duration)
+        event_link = book_meeting(start_time, end_time, "Test Meeting")
+        print(f"Meeting booked successfully! Event link: {event_link}")
+    else:
+        print("No slots available to book a meeting.")
